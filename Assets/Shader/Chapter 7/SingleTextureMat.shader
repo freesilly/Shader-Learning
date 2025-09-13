@@ -2,52 +2,76 @@ Shader "Custom/SingleTextureMat"
 {
     Properties
     {
-        _Color ("Color", Color) = (1,1,1,1)
-        _MainTex ("Albedo (RGB)", 2D) = "white" {}
-        _Glossiness ("Smoothness", Range(0,1)) = 0.5
-        _Metallic ("Metallic", Range(0,1)) = 0.0
+        _Color("Color Tint", Color) = (1,1,1,1)
+        _MainTex("Main Tex", 2D) = "white" {}
+        _Specular("Specular", Color) = (1,1,1,1)
+        _Gloss("Gloss", Range(8.0, 256)) = 20
     }
+
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 200
-
-        CGPROGRAM
-        // Physically based Standard lighting model, and enable shadows on all light types
-        #pragma surface surf Standard fullforwardshadows
-
-        // Use shader model 3.0 target, to get nicer looking lighting
-        #pragma target 3.0
-
-        sampler2D _MainTex;
-
-        struct Input
+        Pass
         {
-            float2 uv_MainTex;
-        };
+            Tags { "LightMode" = "ForwardBase" }
 
-        half _Glossiness;
-        half _Metallic;
-        fixed4 _Color;
+            CGPROGRAM
 
-        // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
-        // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
-        // #pragma instancing_options assumeuniformscaling
-        UNITY_INSTANCING_BUFFER_START(Props)
-            // put more per-instance properties here
-        UNITY_INSTANCING_BUFFER_END(Props)
+            #pragma vertex vert
+            #pragma fragment frag
 
-        void surf (Input IN, inout SurfaceOutputStandard o)
-        {
-            // Albedo comes from a texture tinted by color
-            fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-            o.Albedo = c.rgb;
-            // Metallic and smoothness come from slider variables
-            o.Metallic = _Metallic;
-            o.Smoothness = _Glossiness;
-            o.Alpha = c.a;
+            #include "Lighting.cginc"
+
+            fixed4 _Color;
+            sampler2D _MainTex;
+            float4 _MainTex_ST; //纹理的属性，表示纹理的缩放和平移
+            fixed4 _Specular;
+            float _Gloss;
+
+            struct a2v
+            {
+                float4 _vertex : POSITION;
+                float3 _normal : NORMAL;
+                float4 _texcoord : TEXCOORD0;
+            };
+
+            struct v2f
+            {
+                float4 _pos : SV_POSITION;
+                float3 _worldNormal : TEXCOORD0;
+                float3 _worldPos : TEXCOORD1;
+                float2 _uv : TEXCOORD2;
+            };
+
+            v2f vert(a2v v)
+            {
+                v2f o;
+                o._pos = UnityObjectToClipPos(v._vertex);
+                o._worldNormal = UnityObjectToWorldNormal(v._normal);
+                o._worldPos = mul(unity_ObjectToWorld, v._vertex);
+                o._uv = v._texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw; //纹理的采样坐标
+                return o;
+            }
+
+            fixed4 frag(v2f i) : SV_TARGET
+            {
+                fixed3 worldNormal = normalize(i._worldNormal);
+                fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);
+
+                fixed3 albedo = tex2D(_MainTex, i._uv).rgb * _Color.rgb; //材质的反射率
+
+                fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo; //对于带材质的环境光要乘以材质的反射率
+
+                fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLightDir));
+
+                fixed3 viewDir = normalize(UnityWorldSpaceViewDir(i._worldPos));
+                fixed3 halfDir = normalize(worldLightDir + viewDir);
+                fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, halfDir)), _Gloss);
+
+                return fixed4(ambient + diffuse + specular, 1.0);
+            }
+
+            ENDCG
         }
-        ENDCG
     }
-    FallBack "Diffuse"
+    FallBack "Specular"
 }
