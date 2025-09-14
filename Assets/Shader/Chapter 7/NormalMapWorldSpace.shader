@@ -1,4 +1,4 @@
-Shader "Custom/NormalMapWorldSpace"
+Shader "Custom/Chapter 7/NormalMapWorldSpace"
 {
         Properties
     {

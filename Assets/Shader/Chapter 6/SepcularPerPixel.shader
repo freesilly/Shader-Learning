@@ -1,4 +1,4 @@
-Shader "Custom/SepcularPerPixel"
+Shader "Custom/Chapter 6/SepcularPerPixel"
 {
     Properties
     {

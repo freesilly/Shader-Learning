@@ -1,4 +1,4 @@
-Shader "Custom/RampTexture"
+Shader "Custom/Chapter 7/RampTexture"
 {
     properties
     {

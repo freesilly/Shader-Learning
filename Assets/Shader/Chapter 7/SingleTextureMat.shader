@@ -1,4 +1,4 @@
-Shader "Custom/SingleTextureMat"
+Shader "Custom/Chapter 7/SingleTextureMat"
 {
     Properties
     {

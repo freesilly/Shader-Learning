@@ -1,4 +1,4 @@
-Shader "Custom/DiffusePerPixel"
+Shader "Custom/Chapter 6/DiffusePerPixel"
 {   
     Properties
     {

@@ -1,4 +1,4 @@
-Shader "Custom/MaskTexture"
+Shader "Custom/Chapter 7/MaskTexture"
 {
     properties
     {
@@ -78,7 +78,7 @@ Shader "Custom/MaskTexture"
                 
                 float3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
 
-                float3 diffuse = -_LightColor0.rgb * albedo * saturate(dot(tangentNormal, tangentLightDir));
+                float3 diffuse = _LightColor0.rgb * albedo * saturate((dot(tangentNormal, tangentLightDir)));
 
                 fixed3 halfDir = normalize(tangentLightDir + tangentViewDir);
 

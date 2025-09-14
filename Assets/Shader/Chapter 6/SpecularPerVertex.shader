@@ -1,4 +1,4 @@
-Shader "Custom/SpecularPerVertex"
+Shader "Custom/Chapter 6/SpecularPerVertex"
 {
     Properties
     {

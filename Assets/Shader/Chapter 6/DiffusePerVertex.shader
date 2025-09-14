@@ -1,4 +1,4 @@
-Shader "Custom/DiffusePerVertex"
+Shader "Custom/Chapter 6/DiffusePerVertex"
 {
     Properties
     {
