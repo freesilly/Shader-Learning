@@ -7,11 +7,11 @@ public class ProceduralTextureGeneration : MonoBehaviour
 
     [SerializeField, SetProperty("textureWidth")]
     private int m_textureWidth = 512;
-    public int TextureWidth
+    public int textureWidth
     {
         get
         {
-            return textureWidth;
+            return m_textureWidth;
         }
         set
         {
@@ -20,7 +20,7 @@ public class ProceduralTextureGeneration : MonoBehaviour
         }
     }
 
-    [SerializeField, SetProperty("backgroundColor")]
+    [SerializeField, SetProperty("BackgroundColor")]
     private Color m_backgroundColor = Color.white;
     public Color BackgroundColor
     {
@@ -35,7 +35,7 @@ public class ProceduralTextureGeneration : MonoBehaviour
         }
     }
 
-    [SerializeField, SetProperty("circleColor")]
+    [SerializeField, SetProperty("CircleColor")]
     private Color m_circleColor = Color.red;
     public Color CircleColor
     {
@@ -50,7 +50,7 @@ public class ProceduralTextureGeneration : MonoBehaviour
         }
     }
 
-    [SerializeField, SetProperty("blurFactor")]
+    [SerializeField, SetProperty("BlurFactor")]
     private float m_blurFactor = 2.0f;
     public float BlurFactor
     {
@@ -71,13 +71,13 @@ public class ProceduralTextureGeneration : MonoBehaviour
     {
         if (material == null)
         {
-            Renderer renderer = gameObject.GetComponent<Renderer>();
-            if(renderer = null)
+            MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+            if(meshRenderer == null)
             {
                 Debug.LogWarning("No material attached to the object");
                 return;
             }
-            material = renderer.sharedMaterial;
+            material = meshRenderer.sharedMaterial;
         }
 
         _UpdateMaterial();
@@ -110,7 +110,7 @@ public class ProceduralTextureGeneration : MonoBehaviour
 
         float radius = textureWidth / 10.0f;
 
-        float edgeBlur = 1.0f / blurFactor;
+        float edgeBlur = 1.0f / BlurFactor;
 
         for(int w =0; w < textureWidth; w++)
         {
